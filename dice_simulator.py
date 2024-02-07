@@ -3,13 +3,14 @@ import random
 import itertools
 import time
 
-def update_dice_image(image_label, images, delay=0.1, iterations=10):
+def update_dice_image(image_labels, images, num_dices, delay=0.1, iterations=10):
     for _ in range(iterations):
-        image = next(images)
-        image_label.config(image=image)
+        for label in image_labels:
+            image = next(images[random.randint(0, num_dices-1)])
+            label.config(image=image)
         app.update()
         time.sleep(delay)
-
+        
 def roll_dice():
     num_sides = 6
     result = random.randint(1, num_sides)
