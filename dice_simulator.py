@@ -1,47 +1,32 @@
 import tkinter as tk
-from tkinter import scrolledtext
 import random
+import itertools
+import time
 
-def roll_dices():
-    num_dices = int(num_dices_var.get())
-    num_sides = int(num_sides_var.get())
-    results = [random.randint(1, num_sides) for _ in range(num_dices)]
-    total = sum(results)
-    results_str = ", ".join(str(r) for r in results)
+def update_dice_image(image_label, images, delay=0.1, iterations=10):
+    for _ in range(iterations):
+        image = next(images)
+        image_label.config(image=image)
+        app.update()
+        time.sleep(delay)
 
-    history_text.config(state=tk.NORMAL)
-    history_text.insert(tk.END, f"Dés: {results_str} | Total: {total}\n")
-    history_text.config(state=tk.DISABLED)
+def roll_dice():
+    num_sides = 6
+    result = random.randint(1, num_sides)
+    update_dice_image(dice_image_label, itertools.cycle(dice_images))
+    dice_result.config(text=f"Résultat : {result}")
 
 app = tk.Tk()
-app.title("Simulateur de Lancer de Dés Avancé")
+app.title("Simulateur de Lancer de Dés Animé")
 
-num_dices_var = tk.StringVar(value='1')
-num_sides_var = tk.StringVar(value='6')
+dice_images = [tk.PhotoImage(file=f'images/de_{i}.png') for i in range(1, 6)]
+dice_image_label = tk.Label(app, image=dice_images[0])
+dice_image_label.pack()
 
-instructions = tk.Label(app, text="Nombre de dés et nombre de faces:")
-instructions.pack()
-
-frame = tk.Frame(app)
-frame.pack()
-
-num_dices_label = tk.Label(frame, text="Dés:")
-num_dices_label.pack(side=tk.LEFT)
-num_dices_entry = tk.Entry(frame, textvariable=num_dices_var, width=5)
-num_dices_entry.pack(side=tk.LEFT)
-
-num_sides_label = tk.Label(frame, text="Faces:")
-num_sides_label.pack(side=tk.LEFT)
-num_sides_entry = tk.Entry(frame, textvariable=num_sides_var, width=5)
-num_sides_entry.pack(side=tk.LEFT)
-
-roll_button = tk.Button(app, text="Lancer les dés", command=roll_dices)
+roll_button = tk.Button(app, text="Lancer le dé", command=roll_dice)
 roll_button.pack()
 
-history_label = tk.Label(app, text="Historique des lancers:")
-history_label.pack()
-
-history_text = scrolledtext.ScrolledText(app, state='disabled', height=10)
-history_text.pack()
+dice_result = tk.Label(app, text="")
+dice_result.pack()
 
 app.mainloop()
