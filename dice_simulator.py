@@ -1,33 +1,47 @@
 import tkinter as tk
+from tkinter import scrolledtext
 import random
 
+def roll_dices():
+    num_dices = int(num_dices_var.get())
+    num_sides = int(num_sides_var.get())
+    results = [random.randint(1, num_sides) for _ in range(num_dices)]
+    total = sum(results)
+    results_str = ", ".join(str(r) for r in results)
 
-def roll_dice():
-    num_sides = sides_var.get()
-    if not num_sides:
-        num_sides = 6
-    else:
-        num_sides = int(num_sides)
-
-    roll = random.randint(1, num_sides)
-    result_label.config(text=f"Résultat : {roll}")
-
+    history_text.config(state=tk.NORMAL)
+    history_text.insert(tk.END, f"Dés: {results_str} | Total: {total}\n")
+    history_text.config(state=tk.DISABLED)
 
 app = tk.Tk()
-app.title("Simulateur de Lancer de Dés")
+app.title("Simulateur de Lancer de Dés Avancé")
 
-sides_var = tk.StringVar()
+num_dices_var = tk.StringVar(value='1')
+num_sides_var = tk.StringVar(value='6')
 
-instructions = tk.Label(app, text="Entrez le nombre de faces du dé:")
+instructions = tk.Label(app, text="Nombre de dés et nombre de faces:")
 instructions.pack()
 
-sides_entry = tk.Entry(app, textvariable=sides_var)
-sides_entry.pack()
+frame = tk.Frame(app)
+frame.pack()
 
-roll_button = tk.Button(app, text="Lancer le dé", command=roll_dice)
+num_dices_label = tk.Label(frame, text="Dés:")
+num_dices_label.pack(side=tk.LEFT)
+num_dices_entry = tk.Entry(frame, textvariable=num_dices_var, width=5)
+num_dices_entry.pack(side=tk.LEFT)
+
+num_sides_label = tk.Label(frame, text="Faces:")
+num_sides_label.pack(side=tk.LEFT)
+num_sides_entry = tk.Entry(frame, textvariable=num_sides_var, width=5)
+num_sides_entry.pack(side=tk.LEFT)
+
+roll_button = tk.Button(app, text="Lancer les dés", command=roll_dices)
 roll_button.pack()
 
-result_label = tk.Label(app, text="")
-result_label.pack()
+history_label = tk.Label(app, text="Historique des lancers:")
+history_label.pack()
+
+history_text = scrolledtext.ScrolledText(app, state='disabled', height=10)
+history_text.pack()
 
 app.mainloop()
